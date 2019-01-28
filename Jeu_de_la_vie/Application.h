@@ -20,6 +20,9 @@ protected:
 	void update_draw(std::stack<coord> toUpdate);
 	void add_cell(std::vector<sf::Vertex> &vec, size_t i, size_t j, bool alive);
 
+	void draw_struct(const structure &str);
+
+
 	sf::RenderWindow *window;
 	Configuration * m_config;
 	Game m_game;

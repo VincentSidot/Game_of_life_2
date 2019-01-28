@@ -45,6 +45,7 @@ void Game::killAll()
 
 std::stack<coord> Game::next_iter()
 {
+	m_iter++; // increment iteration
 	std::stack<coord> coord;
 	int n = 0;
 	grid::swap_grid(&m_calcul, &m_current);
@@ -69,6 +70,7 @@ std::stack<coord> Game::next_iter()
 
 void Game::firstIter(float p)
 {
+	m_iter = 1; // we have one iter
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < m_config->line(); i++)
 	{
@@ -77,6 +79,20 @@ void Game::firstIter(float p)
 			if (rand() < int(p*RAND_MAX))
 			{
 				m_current.set(i, j,true);
+			}
+		}
+	}
+}
+
+void Game::printStruct(structure const & struc, size_t i, size_t j)
+{
+	for (size_t ii = 0; ii < struc.line(); ii++)
+	{
+		for (size_t jj = 0; jj < struc.row(); j++)
+		{
+			if (m_current.is_range(i + ii, j + jj))
+			{
+				m_current.set(i + ii, j + jj, struc.get(i, j));
 			}
 		}
 	}

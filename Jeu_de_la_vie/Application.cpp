@@ -33,7 +33,8 @@ void Application::fps()
 	m_fps_text.setFont(m_font);
 	m_fps_text.setCharacterSize(m_config->char_size());
 	m_fps_text.setFillColor(m_config->text_color());
-	m_fps_text.setString(std::to_string(fps));
+	std::string to_disp = " " + std::to_string(fps) + "fps \n " + std::to_string(m_game.iter()) + " iterations";
+	m_fps_text.setString(to_disp);
 	sf::RectangleShape rect;
 	rect.setFillColor(sf::Color::White);//to change
 	rect.setPosition(m_fps_text.getPosition());
@@ -107,6 +108,32 @@ void Application::add_cell(std::vector<sf::Vertex>& vertices, size_t i, size_t j
 	vertices.push_back(sf::Vertex(sf::Vector2f(nj + taille_x, ni), (alive) ? m_config->color_alive() : m_config->color_dead()));
 }
 
+void Application::draw_struct(const structure & str)
+{
+	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
+	int i = localPosition.y*m_config->line() / m_config->height();
+	int j = localPosition.x*m_config->row() / m_config->width();
+	if (m_game.isLicite(i + str.line(), j + str.row()))
+	{
+		for (size_t ii = 0; ii < str.line(); ii++)
+		{
+			for (size_t jj = 0; jj < str.row(); jj++)
+			{
+				if (str.get(ii, jj))
+				{
+					m_game.setAlive(i + ii, j + jj);
+				}
+				else
+				{
+					m_game.setDead(i + ii, j + jj);
+				}
+			}
+		}
+	}
+
+
+}
+
 void Application::play()
 {
 	m_game.firstIter(0.1f);
@@ -130,18 +157,21 @@ void Application::play()
 			{
 				switch (event.key.code)
 				{
-				case sf::Keyboard::Key::Escape:
+				case sf::Keyboard::Key::Escape: // quitter l'app
 					window->close();
 					break;
-				case sf::Keyboard::Key::Space:
+				case sf::Keyboard::Key::Space: // mettre en pause
 					m_paused = !m_paused;
 					m_clock.restart();
 					break;
-				case sf::Keyboard::Key::K:
+				case sf::Keyboard::Key::K: // clear screen
 					m_game.killAll();
 					break;
-				case sf::Keyboard::Key::G:
+				case sf::Keyboard::Key::G: // display/hide grid 
 					m_config->setGrid(!m_config->grid());
+					break;
+				case sf::Keyboard::Key::P:
+					this->draw_struct(planeur());
 					break;
 				default:
 					break;
